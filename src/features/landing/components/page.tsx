@@ -1,7 +1,6 @@
 import { Header1 } from "@/components/layout/header";
 import { Hero } from "./hero";
 import { Footer } from "@/components/layout/footer";
-import Image from 'next/image';
 import { FAQ } from "./faq";
 import { Testimonial } from "./testimonial";
 
@@ -27,16 +26,6 @@ export function LandingPage() {
           src: "https://www.launchuicomponents.com/app-light.png",
         }}
       />
-      {/* Test Thumbnail */}
-      <div className="flex justify-center my-8">
-        <Image
-          src="https://picsum.photos/seed/picsum/600/400"
-          alt="Test Thumbnail"
-          width={600}
-          height={400}
-          className="rounded-lg shadow-lg"
-        />
-      </div>
       {/* Testimonial Section */}
       <Testimonial />
       {/* FAQ Section */}

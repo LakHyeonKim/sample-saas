@@ -4,7 +4,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import useEmblaCarousel from 'embla-carousel-react';
+import { Button } from "@/components/ui/button";
 
 const testimonials = [
   {
@@ -58,6 +60,21 @@ const testimonials = [
 ];
 
 export function Testimonial() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    loop: true,
+    skipSnaps: false,
+    dragFree: true
+  });
+
+  const scrollPrev = React.useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = React.useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
   return (
     <section className="py-16 px-4 md:px-6 lg:px-8 bg-muted/30">
       <div className="max-w-7xl mx-auto">
@@ -71,39 +88,67 @@ export function Testimonial() {
         <p className="text-muted-foreground text-center mb-12 text-lg">
           실제 고객들의 경험을 확인해보세요
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-background border-border/40 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                    <AvatarFallback>{testimonial.name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-semibold">{testimonial.name}</h3>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    <p className="text-xs text-muted-foreground/80">{testimonial.company}</p>
-                  </div>
+        
+        <div className="relative">
+          {/* Carousel Container */}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-6">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.333%]">
+                  <Card className="bg-background border-border/40 hover:shadow-lg transition-shadow h-full">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                          <AvatarFallback>{testimonial.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="font-semibold">{testimonial.name}</h3>
+                          <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                          <p className="text-xs text-muted-foreground/80">{testimonial.company}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-0.5 mb-4">
+                        {Array(testimonial.rating).fill(null).map((_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                          />
+                        ))}
+                        {Array(5 - testimonial.rating).fill(null).map((_, i) => (
+                          <Star
+                            key={i + testimonial.rating}
+                            className="w-4 h-4 text-muted-foreground/20"
+                          />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed">{testimonial.content}</p>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div className="flex gap-0.5 mb-4">
-                  {Array(testimonial.rating).fill(null).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                  {Array(5 - testimonial.rating).fill(null).map((_, i) => (
-                    <Star
-                      key={i + testimonial.rating}
-                      className="w-4 h-4 text-muted-foreground/20"
-                    />
-                  ))}
-                </div>
-                <p className="text-muted-foreground leading-relaxed">{testimonial.content}</p>
-              </CardContent>
-            </Card>
-          ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-center gap-4 mt-8">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={scrollPrev}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={scrollNext}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>
