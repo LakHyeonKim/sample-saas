@@ -3,6 +3,7 @@ import { Hero } from "./hero";
 import { Footer } from "@/components/layout/footer";
 import Image from 'next/image';
 import { FAQ } from "./faq";
+import { Testimonial } from "./testimonial";
 
 export function LandingPage() {
   return (
@@ -36,6 +37,8 @@ export function LandingPage() {
           className="rounded-lg shadow-lg"
         />
       </div>
+      {/* Testimonial Section */}
+      <Testimonial />
       {/* FAQ Section */}
       <FAQ />
       <Footer />
