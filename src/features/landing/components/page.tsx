@@ -1,6 +1,7 @@
 import { Header1 } from "@/components/layout/header";
 import { Hero } from "./hero";
 import { Footer } from "@/components/layout/footer";
+import Image from 'next/image';
 import { FAQ } from "./faq";
 
 export function LandingPage() {
@@ -27,9 +28,11 @@ export function LandingPage() {
       />
       {/* Test Thumbnail */}
       <div className="flex justify-center my-8">
-        <img
+        <Image
           src="https://picsum.photos/seed/picsum/600/400"
           alt="Test Thumbnail"
+          width={600}
+          height={400}
           className="rounded-lg shadow-lg"
         />
       </div>
