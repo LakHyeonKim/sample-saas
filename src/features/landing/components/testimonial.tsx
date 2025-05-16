@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -60,20 +60,36 @@ const testimonials = [
 ];
 
 export function Testimonial() {
+  const [isHovered, setIsHovered] = useState(false);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     loop: true,
     skipSnaps: false,
-    dragFree: true
+    dragFree: true,
+    inset: {
+      start: '1.5rem',
+      end: '1.5rem'
+    }
   });
 
-  const scrollPrev = React.useCallback(() => {
+  const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  const scrollNext = React.useCallback(() => {
+  const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (!emblaApi || isHovered) return;
+
+    const interval = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 3000); // 3초 간격으로 변경 (1초는 너무 빠를 수 있어서)
+
+    return () => clearInterval(interval);
+  }, [emblaApi, isHovered]);
 
   return (
     <section className="py-16 px-4 md:px-6 lg:px-8 bg-muted/30">
@@ -89,12 +105,17 @@ export function Testimonial() {
           실제 고객들의 경험을 확인해보세요
         </p>
         
-        <div className="relative">
+        <div className="relative -mx-6">
           {/* Carousel Container */}
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
+          <div 
+            className="overflow-hidden" 
+            ref={emblaRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <div className="flex">
               {testimonials.map((testimonial, index) => (
-                <div key={index} className="flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.333%]">
+                <div key={index} className="flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.333%] px-3">
                   <Card className="bg-background border-border/40 hover:shadow-lg transition-shadow h-full">
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-4 mb-4">
