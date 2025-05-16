@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LoginPayload, loginPayloadSchema } from "@/features/auth/schema";
-import { login } from "@/features/auth/api";
-import { COOKIE_NAME } from "@/constants/cookie-name";
-import { setCookie } from "cookies-next";
+import { ForgotPasswordPayload, forgotPasswordPayloadSchema } from "@/features/auth/schema";
+import { forgotPassword } from "@/features/auth/api";
 import { cn } from "@/lib/utils";
-import { Mail, Lock } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,36 +21,59 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-export function LoginForm() {
-  const router = useRouter();
+export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const form = useForm<LoginPayload>({
-    resolver: zodResolver(loginPayloadSchema),
+  const form = useForm<ForgotPasswordPayload>({
+    resolver: zodResolver(forgotPasswordPayloadSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (data: LoginPayload) => {
+  const onSubmit = async (data: ForgotPasswordPayload) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await login(data);
-      // 토큰 저장
-      setCookie(COOKIE_NAME.ACCESS_TOKEN, response.accessToken);
-      // 홈페이지로 리다이렉션
-      router.push("/dashboard");
+      await forgotPassword(data);
+      setIsSuccess(true);
     } catch (err: any) {
-      console.error("Login failed:", err);
-      setError(err.response?.data?.error || "로그인 중 오류가 발생했습니다.");
+      console.error("Password reset request failed:", err);
+      setError(err.response?.data?.error || "비밀번호 재설정 요청 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <Card
+        className={cn(
+          "w-full backdrop-blur-sm",
+          "border border-border/40",
+          "shadow-[0_4px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_4px_24px_rgba(255,255,255,0.05)]",
+          "overflow-hidden"
+        )}
+      >
+        <CardContent className="p-6 sm:p-8 text-center">
+          <h3 className="text-lg font-semibold mb-2">이메일이 전송되었습니다</h3>
+          <p className="text-muted-foreground mb-4">
+            비밀번호 재설정 링크가 포함된 이메일을 보내드렸습니다. 이메일을 확인해주세요.
+          </p>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => setIsSuccess(false)}
+          >
+            다시 시도
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -79,40 +99,8 @@ export function LoginForm() {
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="이메일을 입력하세요"
+                        placeholder="가입하신 이메일을 입력하세요"
                         type="email"
-                        className="pl-10 bg-background/50 border-border/50 focus:border-brand/60 transition-all"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-center justify-between">
-                    <FormLabel className="text-foreground/80 font-medium">
-                      비밀번호
-                    </FormLabel>
-                    <Link
-                      href="/auth/forgot-password"
-                      className="text-sm text-brand hover:text-brand/90 hover:underline font-medium transition-colors"
-                    >
-                      비밀번호를 잊으셨나요?
-                    </Link>
-                  </div>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="비밀번호를 입력하세요"
-                        type="password"
                         className="pl-10 bg-background/50 border-border/50 focus:border-brand/60 transition-all"
                         {...field}
                       />
@@ -140,22 +128,21 @@ export function LoginForm() {
               )}
               disabled={isLoading}
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isLoading ? "처리 중..." : "비밀번호 재설정 링크 받기"}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center p-6 pt-0 sm:p-8 sm:pt-0 border-t border-border/10">
         <p className="text-sm text-muted-foreground">
-          계정이 없으신가요?{" "}
           <Link
-            href="/auth/register"
+            href="/auth/login"
             className="text-brand hover:text-brand/90 hover:underline font-medium transition-colors"
           >
-            회원가입
+            로그인으로 돌아가기
           </Link>
         </p>
       </CardFooter>
     </Card>
   );
-}
+} 

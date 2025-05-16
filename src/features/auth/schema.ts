@@ -20,3 +20,13 @@ export type RegisterPayload = z.infer<typeof registerPayloadSchema>;
 
 export const registerResponseSchema = jwtTokenSchema;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
+
+export const forgotPasswordPayloadSchema = z.object({
+  email: z.string().email(),
+});
+export type ForgotPasswordPayload = z.infer<typeof forgotPasswordPayloadSchema>;
+
+export const forgotPasswordResponseSchema = z.object({
+  message: z.string(),
+});
+export type ForgotPasswordResponse = z.infer<typeof forgotPasswordResponseSchema>;
