@@ -1,6 +1,7 @@
 import { Header1 } from "@/components/layout/header";
 import { Hero } from "./hero";
 import { Footer } from "@/components/layout/footer";
+import { FAQ } from "./faq";
 
 export function LandingPage() {
   return (
@@ -24,6 +25,16 @@ export function LandingPage() {
           src: "https://www.launchuicomponents.com/app-light.png",
         }}
       />
+      {/* Test Thumbnail */}
+      <div className="flex justify-center my-8">
+        <img
+          src="https://picsum.photos/seed/picsum/600/400"
+          alt="Test Thumbnail"
+          className="rounded-lg shadow-lg"
+        />
+      </div>
+      {/* FAQ Section */}
+      <FAQ />
       <Footer />
     </div>
   );
